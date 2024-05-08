@@ -15,7 +15,7 @@ describe('Register use case', () => {
       password: '1234567',
     })
 
-    expect(user.id).toEqual(expect.any(Number))
+    await expect(user.id).toEqual(expect.any(Number))
   })
 
   it('A senha do usuário deve ser Hash', async () => {
@@ -33,7 +33,7 @@ describe('Register use case', () => {
       user.password_hash,
     )
 
-    expect(isPasswordCorrectlyHashed).toBe(true)
+    await expect(isPasswordCorrectlyHashed).toBe(true)
   })
 
   it('O e-mail já está cadastrado', async () => {

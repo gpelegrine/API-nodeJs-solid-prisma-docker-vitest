@@ -22,14 +22,14 @@ describe('Authenticate use case', () => {
       password: '1234567',
     })
 
-    expect(user.id).toEqual(expect.any(Number))
+    await expect(user.id).toEqual(expect.any(Number))
   })
 
   it('não deve ser possível autenticar com e-mail errado', async () => {
     const usersRepositoryInMemory = new InMemoryUsersRepository()
     const sut = new AuthenticateService(usersRepositoryInMemory)
 
-    expect(() =>
+    await expect(() =>
       sut.execute({
         email: 'John@example.com',
         password: '1234567',
@@ -41,7 +41,7 @@ describe('Authenticate use case', () => {
     const usersRepositoryInMemory = new InMemoryUsersRepository()
     const sut = new AuthenticateService(usersRepositoryInMemory)
 
-    expect(() =>
+    await expect(() =>
       sut.execute({
         email: 'John@example.com',
         password: '12345678',
