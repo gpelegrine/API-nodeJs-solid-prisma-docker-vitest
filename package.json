@@ -8,7 +8,8 @@
     "start": "npm run build && node build/server.js",
     "build": "tsup src --out-dir build",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:covarage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
