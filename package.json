@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "start": "npm run build && node build/server.js",
     "build": "tsup src --out-dir build",
-    "test": "vitest run",
+    "test": "vitest run --dir src/services",
     "test:watch": "vitest --dir src/services",
     "test:covarage": "vitest run --coverage"
   },
