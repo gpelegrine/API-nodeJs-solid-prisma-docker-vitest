@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-users-repository'
 import { GetUsersProfile } from './get-user-profile'
-import { InvalidCredentialsError } from './error/invalid-credentials-error'
 import { hash } from 'bcryptjs'
+import { randomInt } from 'crypto'
+import { ResourceNotFoundError } from './error/resource-not-found-error'
 
 let usersRepository: InMemoryUsersRepository
 let sut: GetUsersProfile
@@ -28,10 +29,10 @@ describe('profile use case', () => {
   })
 
   it('perfil de usuario não encontrado', async () => {
-    await expect(() => {
+    await expect(() =>
       sut.execute({
-        userId: 1,
-      })
-    }).rejects.toBeInstanceOf(InvalidCredentialsError)
+        userId: randomInt(1000),
+      }),
+    ).rejects.toBeInstanceOf(ResourceNotFoundError)
   })
 })

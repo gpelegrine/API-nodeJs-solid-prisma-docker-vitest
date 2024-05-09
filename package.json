@@ -4,12 +4,12 @@
   "description": "GymPass style app.",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "start:dev": "tsx watch src/server.ts",
     "start": "npm run build && node build/server.js",
     "build": "tsup src --out-dir build",
     "test": "vitest run --dir src/services",
     "test:watch": "vitest --dir src/services",
-    "test:covarage": "vitest run --coverage"
+    "test:covarage": "vitest run --dir src/services --coverage"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +19,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.12.7",
     "prisma": "^5.13.0",
-    "tsup": "^8.0.2",
+    "tsup": "8.0.2",
     "tsx": "^4.7.3",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
@@ -27,8 +27,19 @@
   "dependencies": {
     "@prisma/client": "^5.13.0",
     "bcryptjs": "^2.4.3",
+    "dayjs": "^1.11.11",
     "dotenv": "^16.4.5",
     "fastify": "^4.26.2",
     "zod": "^3.23.5"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gpelegrine/api-solid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gpelegrine/api-solid/issues"
+  },
+  "homepage": "https://github.com/gpelegrine/api-solid#readme"
 }
+
+
