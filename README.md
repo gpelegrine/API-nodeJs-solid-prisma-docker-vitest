@@ -1,6 +1,4 @@
-# APP
-
-GymPass style app.
+# API - NodeJs | Prisma | Solid | Docker | Typescript | Vitest | JWT | Eslint 
 
 ## RFs (Requisitos funcionas)
 
@@ -30,6 +28,3 @@ GymPass style app.
 - [X] Os dados da aplicação precisam estar persistidos em um Banco de dados PostgreSQL;
 - [X] Todas listas de dados precisam estar paginadas com 20 itens por página;
 - [ ] O usuário deve ser identificado por um JWT(JSON Web Token)
-
-
-- Node default - 20
