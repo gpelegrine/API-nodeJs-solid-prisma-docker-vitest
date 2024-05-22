@@ -11,11 +11,11 @@ describe('Validate Check-in use case', () => {
     validadeCheckInRepository = new InMemoryCheckInRepository()
     sut = new ValidateCheckInService(validadeCheckInRepository)
 
-    // vi.isFakeTimers()
+    vi.isFakeTimers()
   })
 
   afterEach(() => {
-    // vi.useRealTimers()
+    vi.useRealTimers()
   })
 
   it('validar o check-in de usuário', async () => {
@@ -43,21 +43,16 @@ describe('Validate Check-in use case', () => {
   })
 
   it('Não será possível validar check-in após 20 minutos da sua criação', async () => {
-    vi.setSystemTime(new Date(2024, 1, 15, 14, 40))
+    const beforeDate = new Date(2024, 1, 15, 14, 0)
+    vi.setSystemTime(beforeDate)
 
     const createCheckIn = await validadeCheckInRepository.create({
       gym_id: 1,
       user_id: 1,
     })
 
-    console.log(
-      `------------------ createCheckIn ------------------>`,
-      createCheckIn,
-    )
-
-    const twentyOneMinutesInMs = 1000 * 60 * 21
-
-    vi.advanceTimersByTime(twentyOneMinutesInMs)
+    const afterDate = new Date(2024, 1, 15, 14, 21)
+    vi.setSystemTime(afterDate)
 
     await expect(() =>
       sut.execute({

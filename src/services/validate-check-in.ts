@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { CheckInRepository } from '../repositories/checkin-repository'
 import { ResourceNotFoundError } from './error/resource-not-found-error'
+import { LateCheckInValidateError } from './error/late-check-in-validate-error'
 
 interface ValidateCheckInServiceRequest {
   checkInId: number
@@ -11,23 +12,18 @@ export class ValidateCheckInService {
 
   async execute({ checkInId }: ValidateCheckInServiceRequest) {
     const checkIn = await this.checkinRepository.findById(checkInId)
-
+    console.log(`------------------ checkIn ------------------>`, checkIn)
     if (!checkIn) {
       throw new ResourceNotFoundError()
     }
 
     const distanceInMinutesFromCheckInCreation = dayjs(new Date()).diff(
       checkIn.created_at,
-      'minute',
-    )
-
-    console.log(
-      `------------------ distanceInMinutesFromCheckInCreation ------------------>`,
-      distanceInMinutesFromCheckInCreation,
+      'minutes',
     )
 
     if (distanceInMinutesFromCheckInCreation > 20) {
-      throw new Error()
+      throw new LateCheckInValidateError()
     }
 
     checkIn.validated_at = new Date()
