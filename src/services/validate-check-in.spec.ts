@@ -1,15 +1,15 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ValidateCheckInService } from './validate-check-in'
 import { InMemoryCheckInRepository } from '../repositories/in-memory/in-memory-checkin-repository'
 import { ResourceNotFoundError } from './error/resource-not-found-error'
 
-let ValidadeCheckInRepository: InMemoryCheckInRepository
+let validadeCheckInRepository: InMemoryCheckInRepository
 let sut: ValidateCheckInService
 
 describe('Validate Check-in use case', () => {
   beforeEach(() => {
-    ValidadeCheckInRepository = new InMemoryCheckInRepository()
-    sut = new ValidateCheckInService(ValidadeCheckInRepository)
+    validadeCheckInRepository = new InMemoryCheckInRepository()
+    sut = new ValidateCheckInService(validadeCheckInRepository)
 
     // vi.isFakeTimers()
   })
@@ -19,7 +19,7 @@ describe('Validate Check-in use case', () => {
   })
 
   it('validar o check-in de usuário', async () => {
-    const createCheckIn = await ValidadeCheckInRepository.create({
+    const createCheckIn = await validadeCheckInRepository.create({
       gym_id: 1,
       user_id: 1,
     })
@@ -29,7 +29,7 @@ describe('Validate Check-in use case', () => {
     })
 
     await expect(checkIn.id).toEqual(expect.any(Number))
-    await expect(ValidadeCheckInRepository.items[0].validated_at).toEqual(
+    await expect(validadeCheckInRepository.items[0].validated_at).toEqual(
       expect.any(Date),
     )
   })
@@ -40,5 +40,29 @@ describe('Validate Check-in use case', () => {
         checkInId: 1,
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError)
+  })
+
+  it('Não será possível validar check-in após 20 minutos da sua criação', async () => {
+    vi.setSystemTime(new Date(2024, 1, 15, 14, 40))
+
+    const createCheckIn = await validadeCheckInRepository.create({
+      gym_id: 1,
+      user_id: 1,
+    })
+
+    console.log(
+      `------------------ createCheckIn ------------------>`,
+      createCheckIn,
+    )
+
+    const twentyOneMinutesInMs = 1000 * 60 * 21
+
+    vi.advanceTimersByTime(twentyOneMinutesInMs)
+
+    await expect(() =>
+      sut.execute({
+        checkInId: createCheckIn.id,
+      }),
+    ).rejects.toBeInstanceOf(Error)
   })
 })
