@@ -1,73 +1,44 @@
-import { CheckIn } from '@prisma/client'
-import { CheckInRepository } from '../repositories/checkin-repository'
-import { GymsRepository } from '../repositories/gyms-repository'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { ValidateCheckInService } from './validate-check-in'
+import { InMemoryCheckInRepository } from '../repositories/in-memory/in-memory-checkin-repository'
 import { ResourceNotFoundError } from './error/resource-not-found-error'
-import { getDistanceBetweenCoordinates } from './utils/get-distance-between-coordinates'
-import { MaxDistanceError } from './error/max-distance-error'
-import { MaxNumberOfCheckInsError } from './error/max-number-of-checkIns-error'
 
-interface ValidateCheckInServiceRequest {
-  userId: number
-  gymId: number
-  userLatitude: number
-  userLongitude: number
-}
+let ValidadeCheckInRepository: InMemoryCheckInRepository
+let sut: ValidateCheckInService
 
-interface ValidateCheckInServiceResponse {
-  checkIn: CheckIn
-}
+describe('Validate Check-in use case', () => {
+  beforeEach(() => {
+    ValidadeCheckInRepository = new InMemoryCheckInRepository()
+    sut = new ValidateCheckInService(ValidadeCheckInRepository)
 
-export class ValidateCheckInService {
-  constructor(
-    private checkinRepository: CheckInRepository,
-    private gymsRepository: GymsRepository,
-  ) {}
+    // vi.isFakeTimers()
+  })
 
-  async execute({
-    gymId,
-    userId,
-    userLatitude,
-    userLongitude,
-  }: ValidateCheckInServiceRequest): Promise<ValidateCheckInServiceResponse> {
-    const gym = await this.gymsRepository.findByUserId(gymId)
+  afterEach(() => {
+    // vi.useRealTimers()
+  })
 
-    if (!gym) {
-      throw new ResourceNotFoundError()
-    }
-
-    const distance = getDistanceBetweenCoordinates(
-      {
-        latitude: userLatitude,
-        longitude: userLongitude,
-      },
-      {
-        latitude: Number(gym.latitude),
-        longitude: Number(gym.longitude),
-      },
-    )
-
-    const MAX_DISTANCE_KM = 0.1
-
-    if (distance > MAX_DISTANCE_KM) {
-      throw new MaxDistanceError()
-    }
-
-    const checkInOnSameDay = await this.checkinRepository.findByUserIdOnDate(
-      userId,
-      new Date(),
-    )
-
-    if (checkInOnSameDay) {
-      throw new MaxNumberOfCheckInsError()
-    }
-
-    const checkIn = await this.checkinRepository.create({
-      gym_id: gymId,
-      user_id: userId,
+  it('validar o check-in de usuário', async () => {
+    const createCheckIn = await ValidadeCheckInRepository.create({
+      gym_id: 1,
+      user_id: 1,
     })
 
-    return {
-      checkIn,
-    }
-  }
-}
+    const { checkIn } = await sut.execute({
+      checkInId: createCheckIn.id,
+    })
+
+    await expect(checkIn.id).toEqual(expect.any(Number))
+    await expect(ValidadeCheckInRepository.items[0].validated_at).toEqual(
+      expect.any(Date),
+    )
+  })
+
+  it('Não pode validar um check-in inexistente', async () => {
+    await expect(() =>
+      sut.execute({
+        checkInId: 1,
+      }),
+    ).rejects.toBeInstanceOf(ResourceNotFoundError)
+  })
+})
