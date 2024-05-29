@@ -12,7 +12,6 @@ export class ValidateCheckInService {
 
   async execute({ checkInId }: ValidateCheckInServiceRequest) {
     const checkIn = await this.checkinRepository.findById(checkInId)
-    console.log(`------------------ checkIn ------------------>`, checkIn)
     if (!checkIn) {
       throw new ResourceNotFoundError()
     }
