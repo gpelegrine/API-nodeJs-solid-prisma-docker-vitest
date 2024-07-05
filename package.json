@@ -25,6 +25,7 @@
     "vitest": "^1.6.0"
   },
   "dependencies": {
+    "@fastify/jwt": "^8.0.1",
     "@prisma/client": "^5.13.0",
     "bcryptjs": "^2.4.3",
     "dayjs": "^1.11.11",
@@ -41,5 +42,3 @@
   },
   "homepage": "https://github.com/gpelegrine/api-solid#readme"
 }
-
-
